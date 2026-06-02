@@ -79,10 +79,13 @@ public class LibroServiceImpl implements LibroService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        Libro libro = libroRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, LIBRO_NOT_FOUND_MESSAGE + id));
-        libroRepository.delete(libro);
+    public boolean delete(Long id) {
+        return libroRepository.findById(id)
+                .map(libro -> {
+                    libroRepository.delete(libro);
+                    return true;
+                })
+                .orElse(false);
     }
 
     private LibroResponseDto toDto(Libro libro) {
